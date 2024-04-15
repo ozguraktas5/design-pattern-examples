@@ -18,27 +18,86 @@
 
 // abstract method
 
+// class Person {
+//     consume() {}
+// }
+
+// class Client extends Person {
+//     consume() {
+//         console.log("Client")
+//     }
+// }
+
+// class PersonFactory {
+//     prepare=(name)
+// }
+
+// class ClientFactory extends PersonFactory {
+//     addClient() {
+//         console.log("Client created")
+//         return new Client();
+//     }
+// }
+
+// const clientUserFact = new ClientFactory();
+// const person = clientUserFact.addClient();
+// person.consume();
+
+// Builder
+
 class Person {
-    consume() {}
-}
+    constructor(name, age) {
+        this.name = name;
+        this.age = age;
+    }
 
-class Client extends Person {
-    consume() {
-        console.log("Client")
+    toString() {
+        return (
+            `${this.name} is ${this.age} years old!`
+        )
     }
 }
 
-class PersonFactory {
-    prepare=(name)
-}
+class PersonBuilder {
+    constructor (person = new Person()) {
+        this.person = person;
+    }
 
-class ClientFactory extends PersonFactory {
-    addClient() {
-        console.log("Client created")
-        return new Client();
+    get age() {
+        return new PersonAgeBuilder(this.person)
+    }
+
+    get name() {
+        return new PersonNameBuilder(this.person)
+    }
+
+    build() {
+        return this.person;
     }
 }
 
-const clientUserFact = new ClientFactory();
-const person = clientUserFact.addClient();
-person.consume();
+class PersonNameBuilder extends PersonBuilder {
+    constructor(person) {
+        super(person)
+    }
+
+    is(name) {
+        this.person.name = name;
+        return this;
+    }
+}
+
+class PersonAgeBuilder extends PersonBuilder {
+    constructor(person) {
+        super(person)
+    }
+
+    is(age) {
+        this.person.age = age;
+        return this;
+    }
+}
+
+const personBuilder = new PersonBuilder();
+const person = personBuilder.name.is("Ozgur").age.is(31).build();
+console.log(person.toString())
